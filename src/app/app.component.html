@@ -1,0 +1,49 @@
+<div class="p-5 lg:px-20 w-full flex flex-col gap-7">
+  <h1 class="text-5xl">Holiday planner !</h1>
+
+  <form [formGroup]="settingsFormGroup" id="input-texts" class="flex flex-col xl:flex-row justify-center xl:justify-between gap-3">
+    <div  class="flex-col xl:flex-row flex gap-3">
+      <p-floatlabel variant="in" class="w-full" >
+        <input fluid="true" pInputText formControlName="name" id="employee_name"/>
+        <label for="employee_name">Employee name</label>
+      </p-floatlabel>
+  
+      <p-floatlabel variant="in">
+        <p-inputnumber fluid="true" formControlName="holiday" id="holidays_number" type="number" min="0" />
+        <label for="holidays_number">Holidays</label>
+      </p-floatlabel>
+  
+      <p-floatlabel variant="in">
+        <p-inputnumber fluid="true" formControlName="rou" id="rou_number" type="number" min="0" />
+        <label for="rou_number">Rou</label>
+      </p-floatlabel>
+
+      <p-floatlabel variant="in">
+        <p-inputnumber fluid="true" formControlName="previousHoliday" id="rou_number" type="number" min="0" />
+        <label for="rou_number">Previous holidays</label>
+      </p-floatlabel>
+
+    </div>
+    <div class="flex flex-row gap-6">
+        <p-selectbutton id="showWeekends" [options]="stateOptions" formControlName="showWeekends"></p-selectbutton>
+        <p-button size="large" [disabled]="settingsFormGroup.invalid" (onClick)="onGenerateClick($event)">Download settings file</p-button>
+  </div>
+</form>
+  <div class="flex flex-col justify-center md:justify-start md:flex-row gap-5">
+    <span class="text-3xl font-bold">Remains {{calculateLeftHolidays()}} Holidays and {{calculateLeftHours()}} Hours</span> 
+  </div>
+  <div class="flex justify-start gap-4">
+    <p-button (onClick)="input.click()" label="Upload settings" icon="pi pi-upload" />
+    <input #input class="hidden" (change)="onUpload(input)" type="file"  accept="application/json" >
+  <p-button severity="secondary" (onClick)="reset()">Reset holidays</p-button>
+</div>
+  
+  <div id="calendar" class="w-full flex flex-row justify-center">
+    <div class="w-full">
+      <full-calendar [events]="holidayTaken" [deepChangeDetection]="true" [options]="calendarOptions"></full-calendar>
+    </div>
+  </div>
+</div>
+
+
+<p-confirmdialog />
