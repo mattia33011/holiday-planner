@@ -1,4 +1,4 @@
-name: Deploy Docker Image
+name: Angular Build and Deploy
 
 on:
   push:
@@ -6,29 +6,23 @@ on:
       - main
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
-    
     steps:
-    - name: Deploy via SSH and Docker
-      uses: appleboy/ssh-action@v1.0.3
-      with:
-        host: ${{ secrets.SSH_HOST }} 
-        username: ${{ secrets.SSH_USER }}
-        key: ${{ secrets.SSH_KEY }}
-        
-        script: |
-          echo "Stopping and removing old container..."
-          docker stop holiday-planner || true
-          docker rm holiday-planner || true
-          
-          echo "Pulling new Docker image..."
-          docker pull mattia33011/holiday-planner:latest 
-          
-          echo "Running new Docker container..."
-          docker run -d \
-            --name holiday-planner \
-            -p 8080:8080 \
-            mattia33011/holiday-planner:latest
-          
-          echo "Deployment complete!"
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+
+      - name: Build Angular app to prod
+        run: npm install && npm run build:prod
+
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: dist/browser
+          branch: prod  
+          token: ${{ secrets.GH_TOKEN }}
