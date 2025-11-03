@@ -1,0 +1,34 @@
+name: Deploy Docker Image
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Deploy via SSH and Docker
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.SSH_HOST }} 
+        username: ${{ secrets.SSH_USER }}
+        key: ${{ secrets.SSH_KEY }}
+        
+        script: |
+          echo "Stopping and removing old container..."
+          docker stop my-nginx-app || true
+          docker rm my-nginx-app || true
+          
+          echo "Pulling new Docker image..."
+          docker pull mattia33011/holiday-planner:latest 
+          
+          echo "Running new Docker container..."
+          docker run -d \
+            --name my-nginx-app \
+            -p 8080:8080 \
+            mattia33011/holiday-planner:latest
+          
+          echo "Deployment complete!"
