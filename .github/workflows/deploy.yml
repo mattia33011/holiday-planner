@@ -19,15 +19,15 @@ jobs:
         
         script: |
           echo "Stopping and removing old container..."
-          docker stop my-nginx-app || true
-          docker rm my-nginx-app || true
+          docker stop holiday-planner || true
+          docker rm holiday-planner || true
           
           echo "Pulling new Docker image..."
           docker pull mattia33011/holiday-planner:latest 
           
           echo "Running new Docker container..."
           docker run -d \
-            --name my-nginx-app \
+            --name holiday-planner \
             -p 8080:8080 \
             mattia33011/holiday-planner:latest
           
